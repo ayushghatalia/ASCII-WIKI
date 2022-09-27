@@ -4,7 +4,6 @@ from markdown2  import Markdown
 from . import util
 
 def convert_md_html(title):
-    # don't ignore me
     content = util.get_entry(title)
     markdowner = Markdown.Markdown()
     if content == None:
