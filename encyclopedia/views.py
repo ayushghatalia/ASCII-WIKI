@@ -1,3 +1,4 @@
+import re
 from django.shortcuts import render
 from markdown import Markdown
 
@@ -46,4 +47,24 @@ def search(request):
             return render(request, "encyclopedia/search.html", {
                 "recommendation": recommendation
             })
+
+def new_page(request):
+    if request.method == "GET":
+        return render(request,"encyclopedia/new_page.html")
+    else:
+        title = request.POST['title']
+        content = request.POST['Content']
+        titleExist = util.get_entry(title)
+        if titleExist is not None:
+            return render(request, "encyclopedia/error.html", {
+                "message": "Entry page already exists"
+            })
+        else:
+            util.save_entry(title, content)
+            html_content = convert_md_html(content)
+            return render(request, "encyclopedia/entry.html", {
+                "title": title,
+                "content": html_content,
+            })
+
 
