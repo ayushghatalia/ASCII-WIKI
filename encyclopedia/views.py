@@ -1,6 +1,7 @@
 import re
 from django.shortcuts import render
 from markdown import Markdown
+import random
 
 from . import util
 
@@ -67,4 +68,31 @@ def new_page(request):
                 "content": html_content,
             })
 
+def edit(request):
+    if request.method == 'POST':
+        title = request.POST['entry_title']
+        content = util.get_entry(title)
+        return render(request, "encyclopedia/edit.html", {
+            "title":title,
+            "content":content,
+        })
 
+def save_edit(request):
+    if request.method == 'POST':
+        title = request.POST['title']
+        content = request.POST['Content']
+        util.save_entry(title, content)
+        html_content = convert_md_html(content)
+        return render(request, "encyclopedia/entry.html", {
+            "title": title,
+            "content": html_content,
+        })
+
+def random(request):
+    allEntries = util.list_entries()
+    rand_entry = random.choice(allEntries)
+    html_content = convert_md_html(rand_entry)
+    return render(request, "encyclopedia/entry.html", {
+        "title": rand_entry,
+        "content":html_content,
+    })
